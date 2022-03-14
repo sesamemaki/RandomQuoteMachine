@@ -1,0 +1,175 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+
+</head>
+
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Sansita+Swashed&display=swap");
+
+    * {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        vertical-align: baseline;
+    }
+
+    div {
+        position: relative;
+        z-index: 2;
+    }
+
+    body {
+        background-color: #333;
+        color: #333;
+        font-family: "Sansita Swashed";
+        font-weight: 400;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    #wrapper {
+        margin: auto;
+    }
+
+    #quote-box {
+        border-radius: 3px;
+        position: relative;
+        width: 450px;
+        padding: 40px 50px;
+        display: table;
+        background-color: #fff;
+    }
+
+    #text {
+        width: 450px;
+        height: auto;
+        clear: both;
+        font-weight: 500;
+        font-size: 1.75em;
+    }
+
+    #author {
+        width: 450px;
+        height: auto;
+        clear: both;
+        padding-top: 20px;
+        padding-bottom: 40px;
+        font-size: 1em;
+        text-align: right;
+    }
+
+    #tweet-quote {
+        width: 38px;
+        margin: auto;
+        height: 25px;
+        border: none;
+        border-radius: 3px;
+        color: #fff;
+        background-color: #333;
+        outline: none;
+        padding: 8px 6px 6px 18px;
+        opacity: 1;
+        float: left;
+    }
+
+    #new-quote {
+        width: 150px;
+        margin: auto;
+        height: 38px;
+        border: none;
+        border-radius: 3px;
+        color: #fff;
+        background-color: #333;
+        outline: none;
+        padding: 8px 18px 6px 18px;
+        opacity: 1;
+        float: right;
+    }
+</style>
+
+<body>
+
+    <div id="wrapper">
+        <div id="quote-box">
+            <div id="text"><i class="fa fa-quote-left" aria-hidden="true"> </i><i class="fa fa-quote-right"
+                    aria-hidden="true"></i>
+            </div>
+            <div id="author"></div>
+            <a id="tweet-quote" target="_top" href="https://twitter.com/intent/tweet"><i class="fa fa-twitter"></i></a>
+            <button id="new-quote">New Quote</button>
+        </div>
+    </div>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+
+
+<script>
+    const projectName = "RQM";
+    let quotesjson;
+
+    var currentQuote = "",
+        currentAuthor = "";
+
+    function quoteMachine() {
+        return $.ajax({
+            headers: {
+                Accept: "application/json"
+            },
+            url:
+                "https://gist.githubusercontent.com/camperbot/5a022b72e96c4c9585c32bf6a75f62d9/raw/e3c6895ce42069f0ee7e991229064f167fe8ccdc/quotes.json",
+            success: function (jsonQuotes) {
+                if (typeof jsonQuotes === "string") {
+                    quotesjson = JSON.parse(jsonQuotes);
+                    console.log("quotesjson");
+                    console.log(quotesjson);
+                }
+            }
+        });
+    }
+
+    function getRandomQuotes() {
+        return quotesjson.quotes[
+            Math.floor(Math.random() * quotesjson.quotes.length)
+        ];
+    }
+
+    function getQuote() {
+        let randomQuote = getRandomQuotes();
+        currentQuote = randomQuote.quote;
+        currentAuthor = randomQuote.author;
+
+        $("#text").html(currentQuote);
+        $("#author").html(currentAuthor);
+
+        let tweetLink =
+            "https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=" +
+            encodeURIComponent('"' + currentQuote + '"' + currentAuthor);
+
+        console.log("tweetLink: ");
+        console.log(tweetLink);
+    }
+
+    /*
+      $('#tweet-quote').attr(
+        'href',
+        tweetLink);
+    */
+
+    $(document).ready(function () {
+        quoteMachine().then(() => {
+            getQuote();
+        });
+
+        $("#new-quote").on("click", getQuote);
+    });
+
+
+</script>
+
+</html>
